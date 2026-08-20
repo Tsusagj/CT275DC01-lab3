@@ -2,11 +2,11 @@
 
 Học kỳ 3, Năm học: 2025-2026
 
-**Họ tên**: ...
+**Họ tên**: Nguyen Le Gia Man
 
-**MSSV**: ...
+**MSSV**: DC25V7K019
 
-**Lớp HP**: ...
+**Lớp HP**: CT275DC01
 
 
 
