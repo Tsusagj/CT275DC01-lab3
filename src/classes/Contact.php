@@ -54,29 +54,57 @@ class Contact
   }
 
   public function all(): array
-    {
-        $contacts = [];
+  {
+    $contacts = [];
 
-        $statement = $this->db->prepare('select * from contacts');
-        $statement->execute();
+    $statement = $this->db->prepare('select * from contacts');
+    $statement->execute();
 
-        while ($row = $statement->fetch()) {
-            $contact = new Contact($this->db);
-            $contact->fillFromDbRow($row);
-            $contacts[] = $contact;
-        }
-
-        return $contacts;
+    while ($row = $statement->fetch()) {
+      $contact = new Contact($this->db);
+      $contact->fillFromDbRow($row);
+      $contacts[] = $contact;
     }
 
-    protected function fillFromDbRow(array $row): Contact
-    {
-        $this->id = $row['id'];
-        $this->name = $row['name'];
-        $this->phone = $row['phone'];
-        $this->notes = $row['notes'];
-        $this->created_at = $row['created_at'];
-        $this->updated_at = $row['updated_at'];
-        return $this;
+    return $contacts;
+  }
+
+  protected function fillFromDbRow(array $row): Contact
+  {
+    $this->id = $row['id'];
+    $this->name = $row['name'];
+    $this->phone = $row['phone'];
+    $this->notes = $row['notes'];
+    $this->created_at = $row['created_at'];
+    $this->updated_at = $row['updated_at'];
+    return $this;
+  }
+  public function count(): int
+  {
+    $statement = $this->db->prepare('select count(*) from contacts');
+    $statement->execute();
+
+    return $statement->fetchColumn();
+  }
+
+  public function paginate(int $offset = 0, int $limit = 10): array
+  {
+    $contacts = [];
+
+    $statement = $this->db->prepare(
+      'select * from contacts limit :limit offset :offset'
+    );
+
+    $statement->bindValue(':offset', $offset, PDO::PARAM_INT);
+    $statement->bindValue(':limit', $limit, PDO::PARAM_INT);
+    $statement->execute();
+
+    while ($row = $statement->fetch()) {
+      $contact = new Contact($this->db);
+      $contact->fillFromDbRow($row);
+      $contacts[] = $contact;
     }
+
+    return $contacts;
+  }
 }
