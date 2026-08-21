@@ -7,8 +7,7 @@ use CT275\Labs\Contact;
 use CT275\Labs\Paginator;
 
 $contact = new Contact($PDO);
-$contacts = $contact->all();
-
+//$contacts = $contact->all();
 $limit = (isset($_GET['limit']) && is_numeric($_GET['limit']))
   ? (int)$_GET['limit']
   : 5;
@@ -52,9 +51,10 @@ include_once __DIR__ . '/../src/partials/header.php';
         </a>
 
         <!-- Table Starts Here -->
-        <table id="contacts" class="table table-striped table-bordered">
+        <table id="contacts" class="table table-striped table-bordered align-middle">
           <thead>
             <tr>
+              <th scope="col" class="text-center avatar-column">Avatar</th>
               <th scope="col">Name</th>
               <th scope="col">Phone</th>
               <th scope="col">Date Created</th>
@@ -65,12 +65,17 @@ include_once __DIR__ . '/../src/partials/header.php';
           <tbody>
             <?php foreach ($contacts as $contact): ?>
               <tr>
+                <td class="text-center align-middle avatar-column">
+                  <?php if ($contact->avatar): ?>
+                    <div class="d-flex justify-content-center align-items-center"><img src="<?= html_escape($contact->avatar) ?>" alt="Avatar" width="60" height="60" class="rounded-circle avatar-img"></div>
+                  <?php endif ?>
+                </td>
                 <td><?= html_escape($contact->name) ?></td>
                 <td><?= html_escape($contact->phone) ?></td>
                 <td><?= html_escape(date("d-m-Y", strtotime($contact->created_at))) ?></td>
                 <td><?= html_escape($contact->notes) ?></td>
 
-                <td class="d-flex justify-content-center">
+                <td class="align-middle">
                   <a href="<?= '/edit.php?id=' . $contact->id ?>"
                     class="btn btn-xs btn-warning">
                     <i alt="Edit" class="fa fa-pencil"></i> Edit
