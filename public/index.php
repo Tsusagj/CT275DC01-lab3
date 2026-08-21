@@ -2,6 +2,12 @@
 require_once __DIR__ . '/../src/bootstrap.php';
 
 include_once __DIR__ . '/../src/partials/header.php';
+
+use CT275\Labs\Contact;
+use CT275\Labs\Paginator;
+
+$contact = new Contact($PDO);
+$contacts = $contact->all();
 ?>
 
 <body>
@@ -34,7 +40,33 @@ include_once __DIR__ . '/../src/partials/header.php';
             </tr>
           </thead>
           <tbody>
+            <?php foreach ($contacts as $contact): ?>
+              <tr>
+                <td><?= html_escape($contact->name) ?></td>
+                <td><?= html_escape($contact->phone) ?></td>
+                <td><?= html_escape(date("d-m-Y", strtotime($contact->created_at))) ?></td>
+                <td><?= html_escape($contact->notes) ?></td>
 
+                <td class="align-middle">
+                  <a href="<?= '/edit.php?id=' . $contact->id ?>"
+                    class="btn btn-xs btn-warning">
+                    <i alt="Edit" class="fa fa-pencil"></i> Edit
+                  </a>
+
+                  <form class="ms-1 d-inline-block" action="/delete.php" method="POST">
+                    <input type="hidden"
+                      name="id"
+                      value="<?= $contact->id ?>">
+
+                    <button type="submit"
+                      class="btn btn-xs btn-danger"
+                      name="delete-contact">
+                      <i alt="Delete" class="fa fa-trash"></i> Delete
+                    </button>
+                  </form>
+                </td>
+              </tr>
+            <?php endforeach ?>
           </tbody>
         </table>
         <!-- Table Ends Here -->
