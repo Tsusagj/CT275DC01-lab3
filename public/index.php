@@ -70,7 +70,7 @@ include_once __DIR__ . '/../src/partials/header.php';
                 <td><?= html_escape(date("d-m-Y", strtotime($contact->created_at))) ?></td>
                 <td><?= html_escape($contact->notes) ?></td>
 
-                <td class="align-middle">
+                <td class="d-flex justify-content-center">
                   <a href="<?= '/edit.php?id=' . $contact->id ?>"
                     class="btn btn-xs btn-warning">
                     <i alt="Edit" class="fa fa-pencil"></i> Edit
@@ -149,6 +149,48 @@ include_once __DIR__ . '/../src/partials/header.php';
 
   <?php include_once __DIR__ . '/../src/partials/footer.php' ?>
   <script>
+    const deleteButtons = document.querySelectorAll(
+      'button[name="delete-contact"]'
+    );
+
+    deleteButtons.forEach(button => {
+      button.addEventListener('click', function(e) {
+        e.preventDefault();
+
+        const form = button.closest('form');
+        const nameTd = button.closest('tr').querySelector('td:first-child');
+
+        if (nameTd) {
+          document.querySelector('.modal-body').textContent =
+            `Do you want to delete "${nameTd.textContent}"?`;
+        }
+
+        const submitForm = function() {
+          form.submit();
+        };
+
+        document.getElementById('delete').addEventListener(
+          'click',
+          submitForm, {
+            once: true
+          }
+        );
+
+        const modalEl = document.getElementById('delete-confirm');
+
+        modalEl.addEventListener('hidden.bs.modal', function() {
+          document.getElementById('delete')
+            .removeEventListener('click', submitForm);
+        });
+
+        const confirmModal = new bootstrap.Modal(modalEl, {
+          backdrop: 'static',
+          keyboard: false
+        });
+
+        confirmModal.show();
+      });
+    });
   </script>
 </body>
 
