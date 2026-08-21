@@ -1,6 +1,47 @@
 <?php
 require_once __DIR__ . '/../src/bootstrap.php';
 
+use CT275\Labs\Contact;
+
+$errors = [];
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+  $avatar = '';
+
+  if (
+    isset($_FILES['avatar']) &&
+    $_FILES['avatar']['error'] === UPLOAD_ERR_OK
+  ) {
+    $filename = uniqid('avatar_') . '_' . basename($_FILES['avatar']['name']);
+
+    $uploadPath = __DIR__ . '/uploads/' . $filename;
+
+    move_uploaded_file(
+      $_FILES['avatar']['tmp_name'],
+      $uploadPath
+    );
+
+    $avatar = '/uploads/' . $filename;
+  }
+
+  $contactData = [
+    'name' => $_POST['name'] ?? '',
+    'phone' => $_POST['phone'] ?? '',
+    'notes' => $_POST['notes'] ?? '',
+    'avatar' => $avatar,
+  ];
+
+  $contact = new Contact($PDO);
+
+  $errors = $contact->validate($contactData);
+
+  if (empty($errors)) {
+    $contact->fill($contactData);
+    $contact->save() && redirect('/');
+  }
+}
+
 include_once __DIR__ . '/../src/partials/header.php';
 ?>
 
